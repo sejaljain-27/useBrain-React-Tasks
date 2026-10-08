@@ -8,29 +8,45 @@ export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
 
   const add = () => {
     if (!text.trim()) return
-    todos.push({ id: Date.now(), text, done: false })
-    setTodos(todos)
+
+    setTodos([...todos, { id: Date.now(), text, done: false }])
     setText('')
   }
 
   const toggle = (id: number) => {
-    const todo = todos.find(t => t.id === id)!
-    todo.done = !todo.done
-    setTodos(todos)
+    setTodos(
+      todos.map(todo =>
+        todo.id === id
+          ? { ...todo, done: !todo.done }
+          : todo
+      )
+    )
   }
 
   return (
     <div>
-      <input value={text} onChange={e => setText(e.target.value)} placeholder="New todo" />
+      <input
+        value={text}
+        onChange={e => setText(e.target.value)}
+        placeholder="New todo"
+      />
       <button onClick={add}>Add</button>
+
       <ul>
         {todos.map(t => (
-          <li key={t.id} className={t.done ? 'done' : ''} onClick={() => toggle(t.id)}>
+          <li
+            key={t.id}
+            className={t.done ? 'done' : ''}
+            onClick={() => toggle(t.id)}
+          >
             {t.text}
           </li>
         ))}
       </ul>
-      <p data-testid="left">{todos.filter(t => !t.done).length} left</p>
+
+      <p data-testid="left">
+        {todos.filter(t => !t.done).length} left
+      </p>
     </div>
   )
 }
